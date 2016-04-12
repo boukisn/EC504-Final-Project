@@ -8,8 +8,10 @@ import time
 from pytrie import SortedStringTrie as trie
 import unicodedata
 import os
+from Tkinter import *
+import ttk
 
-def sendBloom(to_ip, bloom):
+def sendBloom(to_ip, bloom, print_labels=False, frame=None, print_start=0):
 	f = open('bloomFileOut', 'w+')
 	f.close()
 	f = open('bloomFileOut', 'wb')
@@ -35,13 +37,15 @@ def sendBloom(to_ip, bloom):
 	        break
 	    size += sys.getsizeof(chunk)
 	    s.sendall(chunk)
-	print "Sent " + str(size) + " bytes"
+	print "Sent " + str(size/1000) + " KB"
+	if print_labels:
+		ttk.Label(frame, text=("Sent bloom filter (" + str(size/1000) + " KB)")).grid(row=print_start,column=0)
 	f.close()
 	s.close()
 	os.remove('bloomFileOut')
 
 
-def waitForBloom(from_ip):
+def waitForBloom(from_ip, print_labels=False, frame=None, print_start=0):
 	f = open('bloomFileIn', 'wb')
 
 	host = from_ip
@@ -64,7 +68,9 @@ def waitForBloom(from_ip):
 		f.write(data)
 		data = conn.recv(1024)
 		size += sys.getsizeof(data)
-	print "Received " + str(size) + " bytes"
+	print "Received " + str(size/1000) + " KB"
+	if print_labels:
+		ttk.Label(frame, text=("Received bloom filter (" + str(size/1000) + " KB)")).grid(row=print_start,column=0)
 	f.close()
 	f = open('bloomFileIn', 'rb')
 	bloom = BloomFilter.fromfile(f)
@@ -74,7 +80,7 @@ def waitForBloom(from_ip):
 	os.remove('bloomFileIn')
 	return bloom
 
-def sendData(to_ip, data):
+def sendData(to_ip, data, print_labels=False, frame=None, print_start=0):
 	host = to_ip
 	port = 10000
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,11 +93,13 @@ def sendData(to_ip, data):
 			break
 	print "Connected to " + host
 	data_string = json.dumps(data)
+	if print_labels:
+		ttk.Label(frame, text=("Sent json (" + str(sys.getsizeof(data_string)/1000) + " KB)")).grid(row=print_start,column=0)
 	s.sendall(data_string)
 	s.close()
 
 
-def waitForData(from_ip):
+def waitForData(from_ip, print_labels=False, frame=None, print_start=0):
 	host = from_ip
 	port = 10000
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -113,13 +121,15 @@ def waitForData(from_ip):
 		data = conn.recv(1024)
 		complete_data += data
 		size += sys.getsizeof(data)
-	print "Received " + str(size) + " bytes"
+	print "Received " + str(size/1000) + " KB"
+	if print_labels:
+		ttk.Label(frame, text=("Received json (" + str(size/1000) + " KB)")).grid(row=print_start,column=0)
 	data_loaded = json.loads(complete_data)
 	conn.close()
 	s.close()
 	return data_loaded
 
-def serverSync(filename, ip_to, ip_from):
+def serverSync(filename, ip_to, ip_from, print_labels=False, frame=None, print_start=0):
 	print "0. Analyze file"
 	
 	with open(filename) as f:
@@ -147,7 +157,7 @@ def serverSync(filename, ip_to, ip_from):
 	# 1. Receive other bloom
 	print "1. Receive other bloom"
 	print "------------------------------------------------"
-	client_bloom = waitForBloom(ip_from)
+	client_bloom = waitForBloom(ip_from, print_labels, frame, print_start)
 	print
 
 	# 2. Compare with my bloom & generate list to send
@@ -158,20 +168,20 @@ def serverSync(filename, ip_to, ip_from):
 	# 3. Send list
 	print "3. Send list"
 	print "------------------------------------------------"
-	sendData(ip_to, entries_to_send)
+	sendData(ip_to, entries_to_send, print_labels, frame, (print_start + 1))
 	time.sleep(1)
 	print
 
 	# 4. Send bloom
 	print "4. Send bloom"
 	print "------------------------------------------------"
-	sendBloom(ip_to, server_bloom)
+	sendBloom(ip_to, server_bloom, print_labels, frame, (print_start + 2))
 	print
 
 	# 6. Receive list
 	print "6. Receive list"
 	print "------------------------------------------------"
-	entries_needed = waitForData(ip_from)
+	entries_needed = waitForData(ip_from, print_labels, frame, (print_start + 3))
 	print
 
 	# Add new entries
@@ -191,7 +201,7 @@ def serverSync(filename, ip_to, ip_from):
 	for item in sorted_list:
 	  f.write("%s\n" % item)
 
-def clientSync(filename, ip_to, ip_from):
+def clientSync(filename, ip_to, ip_from, print_labels=False, frame=None, print_start=0):
 	print "0. Analyze file"
 
 	with open(filename) as f:
@@ -219,19 +229,19 @@ def clientSync(filename, ip_to, ip_from):
 	# 1. Send bloom
 	print "1. Send bloom"
 	print "------------------------------------------------"
-	sendBloom(ip_to, client_bloom)
+	sendBloom(ip_to, client_bloom, print_labels, frame, print_start)
 	print
 
 	# 3. Receive list
 	print "3. Receive list"
 	print "------------------------------------------------"
-	entries_needed = waitForData(ip_from)
+	entries_needed = waitForData(ip_from, print_labels, frame, (print_start + 1))
 	print
 
 	# 4. Receive bloom
 	print "4. Receive bloom"
 	print "------------------------------------------------"
-	server_bloom = waitForBloom(ip_from)
+	server_bloom = waitForBloom(ip_from, print_labels, frame, (print_start + 2))
 	print
 
 	# 5. Compare with my bloom & generate list to send
@@ -243,7 +253,7 @@ def clientSync(filename, ip_to, ip_from):
 	# 6. Send list
 	print "6. Send list"
 	print "------------------------------------------------"
-	sendData(ip_to, entries_to_send)
+	sendData(ip_to, entries_to_send, print_labels, frame, (print_start + 3))
 	print
 
 	# Add new entries
