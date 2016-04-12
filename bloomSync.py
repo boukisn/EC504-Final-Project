@@ -40,6 +40,35 @@ def compare_blooms(first_bloom, second_bloom, index_dict):
 
 	return list(set(packet_first_to_second)), list(set(packet_second_to_first))
 
+def compare_blooms2(first_bloom, second_bloom, index_dict):
+	packet_first_to_second 	   = []
+	index_packet_first_to_second_def = []
+	index_packet_first_to_second_meb = []
+
+	for i in range(len(first_bloom.bitarray)):
+		if first_bloom.bitarray[i] == True and second_bloom.bitarray[i] == False:
+			index_packet_first_to_second_def.append(i)
+		elif first_bloom.bitarray[i] == True and second_bloom.bitarray[i] == True:
+			index_packet_first_to_second_meb.append(i)
+
+	for index in index_packet_first_to_second_def:
+		for entry in index_dict[index]:
+			packet_first_to_second.append(entry)
+
+	"""
+	for index in index_packet_first_to_second_meb:
+		for entry in index_dict[index]:
+			if entry in first_bloom:
+				packet_first_to_second.append(entry)
+
+	for index in index_packet_second_to_first_meb:
+		for entry in index_dict[index]:
+			if entry in second_bloom:
+				packet_second_to_first.append(entry)
+	"""
+
+	return list(set(packet_first_to_second))
+
 def sync(database_one_list, database_two_list, database_three_list, size):
 	database_one_bloom 	 = BloomFilter(capacity=size, error_rate=0.0001)
 	database_two_bloom 	 = BloomFilter(capacity=size, error_rate=0.0001)
