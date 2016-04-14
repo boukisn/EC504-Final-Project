@@ -5,7 +5,7 @@ autocomplete_Functions.py
 '''
 
 import re
-import trie.py
+import trie
 
 #define function to accept txt file, create trie, return that trie
 def create_trie(filename):
@@ -27,3 +27,5 @@ def create_trie(filename):
 	
 	text.close()
 	return file_trie
+
+#returning popular results

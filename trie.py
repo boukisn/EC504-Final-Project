@@ -77,7 +77,7 @@ class trie:
 		if self.hits:
 			print(self.key + ": " + str(self.hits))
 		else:
-			print(self.key, end='')
+			print(self.key)
 
 		for key in self.children:
 			self.children[key].toString()
