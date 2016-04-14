@@ -5,8 +5,6 @@ Trie creation
 Trie.py
 '''
 
-from operator import itemgetter
-
 #I guess it's time for auto complete
 
 
@@ -80,54 +78,4 @@ class trie:
 #sorting function for popularity search
 def popular_sort(some_list):
 	#orders by number of hits
-	return sorted(some_list, key = itemgetter(1), reverse = True)
-
-#root = trie('', 0)
-
-'''
-aaaaa  14
-be  2
-bee 999
-been 10
-ben 15
-soup 3
-so  1
-zoo 99
-zootopia 1000
-'''
-'''
-root = trie()
-words = [('aaaaa', 14),('be',2),('bee',999),('been', 10),('ben', 15), ('sami', 1), ('nick', 1),('soup', 20), ('so', 4),('zootopia', 1000), ('zoo', 99)]
-for word in words:
-	root.add_child(word[0], word[1])
-
-'''
-
-#root.toString()
-
-"""
-#print(root.search('aaaaa'))
-
-
-#take file, create trie
-#for new elements, adding to the trie is the height of the trie
-#sample
-
-text = '''yolo   13
-sawg   6
-dank 8
-bananas345'''
-"""
-#entries = re.split("\n+",text)
-"""
-print(entries)
-
-
-
-for word in wordmass:
-	root.add_child(word[0], word[1])
-
-root.toString()
-#well I think that'll do
-
-"""
+	return sorted(some_list, key = lambda search: search[1], reverse = True)
