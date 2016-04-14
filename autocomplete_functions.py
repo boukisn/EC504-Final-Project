@@ -5,7 +5,7 @@ autocomplete_Functions.py
 '''
 
 import re
-import trie
+from trie import trie
 
 #define function to accept txt file, create trie, return that trie
 def create_trie(filename):
@@ -29,3 +29,14 @@ def create_trie(filename):
 	return file_trie
 
 #returning popular results
+def search_trie(some_trie, base=''):
+	#returns 4 most popular elements of trie
+	return some_trie.popular(base)
+
+
+root = trie()
+words = [('aaaaa', 14),('be',2),('bee',999),('been', 10),('ben', 15), ('sami', 1), ('nick', 1),('soup', 20), ('so', 4),('zootopia', 1000), ('zoo', 99)]
+for word in words:
+	root.add_child(word[0], word[1])
+
+print(search_trie(root, ""))
