@@ -38,6 +38,8 @@ def search_trie(some_trie, base=''):
 	return some_trie.popular(base)
 
 
-root = create_trie("SmallSampleDatabase.txt")
+#check for faster txt handling
 
-print(search_trie(root, "b"))
+#root = create_trie(".\\db1\\DC1-sampleQueries.txt")
+
+#print(search_trie(root, "b"))
