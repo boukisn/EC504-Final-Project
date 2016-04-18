@@ -5,6 +5,7 @@ Trie creation
 Trie.py
 '''
 
+#import re
 #I guess it's time for auto complete
 
 class trie:
@@ -46,6 +47,30 @@ class trie:
 			else:
 				self.children[c_key[0]] = trie(c_key[0], 0)
 				self.children[c_key[0]].add_child(c_key[1:], c_hits)
+	'''
+	def extend(self, filename):
+		#adds elements to a trie
+		#first, let's try the obvious wrong way
+		text = open(filename, buffering=1)
+		#create an empty trie called file_trie
+
+		#regex for parsing each line
+		pattern = re.compile(r"^(\w+?)\s*?(\d+?)$")
+		
+		#begin regular expressions on file line by line
+
+		while(text):
+			line = text.readline()
+			if not line:
+				break
+			#parse with regex
+			match = pattern.match(line)
+			if match is not None:
+				#add each line's word and hits to trie
+				self.add_child(match.groups()[0], int(match.groups()[1]))
+		
+		text.close()
+	'''
 
 	def search(self, word):
 		#returns hits for a word

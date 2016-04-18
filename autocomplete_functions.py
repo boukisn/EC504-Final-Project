@@ -21,8 +21,6 @@ def create_trie(filename):
 	#create an empty trie called file_trie
 	file_trie = trie()
 
-
-
 	#regex for parsing each line
 	pattern = re.compile(r"^(\w+?)\s*?(\d+?)$")
 	
@@ -40,9 +38,17 @@ def create_trie(filename):
 
 	
 	text.close()
-	#time testing
 
 	return file_trie
+
+#extending a trie, with additional elements
+
+def new_elements(some_trie, *childs):
+	#adds elements to a trie
+	#If elements coming in from other databases can be put into a list of tuples, this would work
+	for child in childs:
+		some_trie.add_child(child[0], int(child[1]))
+
 
 #returning popular results
 def search_trie(some_trie, base=''):
@@ -51,7 +57,7 @@ def search_trie(some_trie, base=''):
 
 
 #check for faster txt handling
-'''
+
 root = create_trie(".\\db2\\DC2-sampleQueries.txt")
 
 print(search_trie(root, ""))
@@ -59,4 +65,4 @@ print(search_trie(root, ""))
 #time testing
 print(time.clock() - start_time)
 
-'''
+
