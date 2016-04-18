@@ -8,16 +8,26 @@ import re
 
 from trie import trie
 
+import time
+
+#function start time
+start_time = time.clock()
+
 #define function to accept txt file, create trie, return that trie
 def create_trie(filename):
+
+
 	text = open(filename, buffering=1)
 	#create an empty trie called file_trie
 	file_trie = trie()
 
+
+
 	#regex for parsing each line
-	pattern = re.compile(r"^([\w]+)\s*(\d+)")
+	pattern = re.compile(r"^(\w+?)\s*?(\d+?)$")
 	
 	#begin regular expressions on file line by line
+
 	while(text):
 		line = text.readline()
 		if not line:
@@ -30,6 +40,8 @@ def create_trie(filename):
 
 	
 	text.close()
+	#time testing
+
 	return file_trie
 
 #returning popular results
@@ -39,7 +51,12 @@ def search_trie(some_trie, base=''):
 
 
 #check for faster txt handling
+'''
+root = create_trie(".\\db2\\DC2-sampleQueries.txt")
 
-#root = create_trie(".\\db1\\DC1-sampleQueries.txt")
+print(search_trie(root, ""))
 
-#print(search_trie(root, "b"))
+#time testing
+print(time.clock() - start_time)
+
+'''
