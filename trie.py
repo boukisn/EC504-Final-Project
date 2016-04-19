@@ -30,7 +30,7 @@ class trie:
 				else:
 					self.children.add_child(c_key[1:], c_hits)
 			else:
-				self.children = {self.children.key:trie(c_key[0], self.children.hits)}
+				self.children = { self.children.key: self.children }
 				if len(c_key) == 1:
 					self.children[c_key[0]] = trie(c_key[0], c_hits)
 				else:
@@ -88,11 +88,17 @@ class trie:
 		#returns 4 popular results starting at base
 		#check if len(base = 1)
 		if len(base) == 1:
-			if type(self.children) == type(dict()):
-				return self.children[base].popular(branch = branch+base)
-			elif self.children.key == base:
-				#only one child
-				return self.children.popular(branch = branch+base)
+			if self.children is not None:
+				if type(self.children) == type(dict()):
+					return self.children[base].popular(branch = branch+base)
+				elif self.children.key == base:
+					#only one child
+					return self.children.popular(branch = branch+base)
+				else:
+					return []
+			else:
+				return []
+		#if base is empty
 		elif not base:
 			#find all words/elements below this node
 			elements = []
@@ -101,24 +107,32 @@ class trie:
 					if self.children[key].hits:
 						#add to elements
 						elements.append((branch + key, self.children[key].hits))
-					elements.extend(self.children[key].popular(branch= branch + key) )
+					elements.extend(self.children[key].popular(branch = branch + key) )
 				#sort elements and keep only first four elements
 			elif self.children is not None:
 				#only one child on this branch
 				if self.children.hits:
 					#add to elements
 					elements.append((branch + self.children.key, self.children.hits))
-				elements.extend(self.children.popular(branch= branch + self.children.key) )
+				elements.extend(self.children.popular(branch = branch + self.children.key) )
 			if len(elements) > 4:
 				elements = popular_sort(elements)[0:4]
 			return elements
-			
+
 		else:
 			#iterate down one child
-			if type(self.children) is type(dict()):
-				return self.children[base[0]].popular(base[1:], branch = branch+base[0])
-			elif self.children.key == base[0]:
-				return self.children.popular(base[1:], branch = branch+base[0])
+			if self.children is not None:
+				if type(self.children) is type(dict()):
+					if base[0] in self.children:
+						return self.children[base[0]].popular(base[1:], branch = branch+base[0])
+					else:
+						return []
+				elif self.children.key == base[0]:
+					return self.children.popular(base[1:], branch = branch+base[0])
+				else:
+					return []
+			else:
+				return []
 
 
 	def toString(self):
