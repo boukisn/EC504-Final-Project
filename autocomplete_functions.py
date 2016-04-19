@@ -60,7 +60,7 @@ def search_trie(some_trie, base=''):
 
 root = create_trie(".\\db2\\DC2-sampleQueries.txt")
 
-print(search_trie(root, ''))
+print(search_trie(root, 'c'))
 
 #time testing
 print(time.clock() - start_time)

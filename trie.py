@@ -87,13 +87,16 @@ class trie:
 	def popular(self, base = '', branch = ''):
 		#returns 4 popular results starting at base
 		#check if len(base = 1)
+		elements = []
 		if len(base) == 1:
 			if self.children is not None:
 				if type(self.children) == type(dict()):
-					return self.children[base].popular(branch = branch+base)
+					elements = self.children[base].popular(branch = branch+base)
+					elements.append((branch+base, self.children[base].hits))
 				elif self.children.key == base:
 					#only one child
-					return self.children.popular(branch = branch+base)
+					elements = self.children.popular(branch = branch+base)
+					elements.append(branch+base, self.children.hits)
 				else:
 					return []
 			else:
@@ -101,7 +104,6 @@ class trie:
 		#if base is empty
 		elif not base:
 			#find all words/elements below this node
-			elements = []
 			if type(self.children) is type(dict()):
 				for key in self.children:
 					if self.children[key].hits:
@@ -115,10 +117,6 @@ class trie:
 					#add to elements
 					elements.append((branch + self.children.key, self.children.hits))
 				elements.extend(self.children.popular(branch = branch + self.children.key) )
-			if len(elements) > 4:
-				elements = popular_sort(elements)[0:4]
-			return elements
-
 		else:
 			#iterate down one child
 			if self.children is not None:
@@ -133,6 +131,10 @@ class trie:
 					return []
 			else:
 				return []
+		#once done looking through tree, find four highest results
+		if not branch and len(elements) > 4:
+			elements = popular_sort(elements)[0:4]
+		return elements
 
 
 	def toString(self):
