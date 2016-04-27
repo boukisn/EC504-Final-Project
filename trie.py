@@ -1,22 +1,18 @@
 '''
-Sami Shahin
+Nick Boukis & Sami Shahin
 EC504
-Trie creation
-Trie.py
+trie.py
 '''
-
-#import re
-#I guess it's time for auto complete
 
 class trie:
 
 	def __init__(self, key = '', hits = 0):
 		self.key = key
 		self.hits = hits
-		self.children = None		#tries
+		self.children = None		# Tries
 
 	def add_child(self, c_key, c_hits):
-		#add child element to trie, when an element has more than one child, put them in a dictionary
+		# Add child element to trie, when an element has more than one child, put them in a dictionary
 		if self.children is None:
 			if len(c_key) == 1:
 				self.children = trie(c_key[0], c_hits)
@@ -47,33 +43,9 @@ class trie:
 			else:
 				self.children[c_key[0]] = trie(c_key[0], 0)
 				self.children[c_key[0]].add_child(c_key[1:], c_hits)
-	'''
-	def extend(self, filename):
-		#adds elements to a trie
-		#first, let's try the obvious wrong way
-		text = open(filename, buffering=1)
-		#create an empty trie called file_trie
-
-		#regex for parsing each line
-		pattern = re.compile(r"^(\w+?)\s*?(\d+?)$")
-		
-		#begin regular expressions on file line by line
-
-		while(text):
-			line = text.readline()
-			if not line:
-				break
-			#parse with regex
-			match = pattern.match(line)
-			if match is not None:
-				#add each line's word and hits to trie
-				self.add_child(match.groups()[0], int(match.groups()[1]))
-		
-		text.close()
-	'''
 
 	def search(self, word):
-		#returns hits for a word
+		# Returns hits for a word
 		if word[0] in self.children:
 			if len(word) == 1:
 				return self.children[word[0]].hits
@@ -82,11 +54,11 @@ class trie:
 		else:
 			return 0
 
-	#define a method for finding most popular results starting with base string
-	
+	# Define a method for finding most popular results starting with base string
 	def popular(self, base = '', branch = ''):
-		#returns 4 popular results starting at base
-		#check if len(base = 1)
+		# Returns 4 popular results starting at base
+		
+		# Check if len(base = 1)
 		elements = []
 		if len(base) == 1:
 			if self.children is not None:
@@ -101,24 +73,24 @@ class trie:
 					return []
 			else:
 				return []
-		#if base is empty
+		# If base is empty
 		elif not base:
-			#find all words/elements below this node
+			# Find all words/elements below this node
 			if type(self.children) is type(dict()):
 				for key in self.children:
 					if self.children[key].hits:
-						#add to elements
+						# Add to elements
 						elements.append((branch + key, self.children[key].hits))
 					elements.extend(self.children[key].popular(branch = branch + key) )
-				#sort elements and keep only first four elements
+				# Sort elements and keep only first four elements
 			elif self.children is not None:
-				#only one child on this branch
+				# Only one child on this branch
 				if self.children.hits:
-					#add to elements
+					# Add to elements
 					elements.append((branch + self.children.key, self.children.hits))
 				elements.extend(self.children.popular(branch = branch + self.children.key) )
 		else:
-			#iterate down one child
+			# Iterate down one child
 			if self.children is not None:
 				if type(self.children) is type(dict()):
 					if base[0] in self.children:
@@ -131,16 +103,15 @@ class trie:
 					return []
 			else:
 				return []
-		#once done looking through tree, find four highest results
+		# Once done looking through tree, find four highest results
 		if not branch and len(elements) > 4:
 			elements = popular_sort(elements)[0:4]
 		return elements
 
-
 	def toString(self):
-		#print out full trie
-		#prints each branch, root to leaves
-		#TESTING ONLY
+		# Print out full trie
+		# Prints each branch, root to leaves
+		# TESTING ONLY
 		if self.hits:
 			print(self.key + ": " + str(self.hits))
 		else:
@@ -150,7 +121,7 @@ class trie:
 			self.children[key].toString()
 
 
-#sorting function for popularity search
+# Sorting function for popularity search
 def popular_sort(some_list):
-	#orders by number of hits
+	# Orders by number of hits
 	return sorted(some_list, key = lambda search: search[1], reverse = True)
