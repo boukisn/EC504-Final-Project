@@ -16,6 +16,7 @@ $ pip install bitarray
 3. Get IP address of Mac's ethernet port by going to settings, pass this as a variable in ip_from
 
 ON WINDOWS:
+
 4. Change IP address in ```db2.py```
 5. Run
 ```sh
@@ -27,9 +28,11 @@ $ python db2.py
 ``` 
 
 ON MAC:
+
 6. Open two tabs in terminal, left is ```db1_gui``` and right is ```db3```
 
 IN ```db3``` TAB:
+
 7. Run
 ```sh
 $ cd /path/to/db3.py
@@ -38,6 +41,7 @@ $ python db3.py
 ``` 
 
 IN ```db1_gui``` TAB:
+
 8. Run
 ```sh
 $ cd /path/to/EC504-Final-Project
